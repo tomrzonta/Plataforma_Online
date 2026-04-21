@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Base de Conhecimento</title>
+    <style>
+        body { display: flex; margin: 0; font-family: sans-serif; }
+        
+        /* Estilo da barra lateral */
+        .sidebar { 
+            width: 260px; /* Aumentado um pouco para acomodar as sub-gavetas */
+            background: #3F0E40; 
+            color: #d1d2d3; 
+            height: 100vh; 
+            padding: 20px 10px; 
+            box-sizing: border-box;
+            overflow-y: auto; /* Permite rolar o menu se ele ficar muito longo */
+        }
+        .content { flex: 1; padding: 20px; background: #f8f9fa; }
+        
+        /* ========================================= */
+        /* ESTILOS DAS GAVETAS (DETAILS / SUMMARY)   */
+        /* ========================================= */
+        details {
+            margin-bottom: 5px;
+        }
+        
+        /* O título da gaveta */
+        summary {
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: white;
+            list-style: none; /* Remove a seta padrão do navegador */
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Setinha customizada animada */
+        summary::before {
+            content: '▶';
+            font-size: 0.7em;
+            margin-right: 8px;
+            transition: transform 0.2s; /* Animação suave */
+        }
+        
+        /* Gira a setinha para baixo quando a gaveta está aberta */
+        details[open] > summary::before {
+            transform: rotate(90deg);
+        }
+        
+        /* Efeito ao passar o mouse */
+        summary:hover {
+            background: #350d36; 
+        }
+        
+        /* O conteúdo dentro da gaveta */
+        .submenu {
+            padding-left: 20px; /* Cria o recuo visual da hierarquia */
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Ajuste visual para sub-gavetas não ficarem em negrito */
+        .submenu details summary {
+            font-weight: normal;
+            color: #d1d2d3;
+        }
+        
+        /* Estilo dos links normais no menu */
+        a.menu-link { 
+            color: #d1d2d3; 
+            text-decoration: none; 
+            padding: 8px 8px 8px 20px; 
+            display: block;
+            border-radius: 4px;
+        }
+        a.menu-link:hover {
+            background: #350d36;
+            color: white;
+        }
+        
+        hr { border-color: #522653; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h3 style="color: white; padding-left: 8px; margin-top: 0;">Workspace</h3>
+        
+        <a href="{{ url_for('home') }}" class="menu-link" style="padding-left: 8px; font-weight: bold; color: white;"># feed-geral</a>
+        <hr>
+
+        <details>
+            <summary>Suporte</summary>
+            <div class="submenu">
+                
+                <details>
+                    <summary>Canais de atendimento</summary>
+                    <div class="submenu">
+                        <a href="#" class="menu-link">Intercom</a>
+                        <a href="#" class="menu-link">Reclame Aqui</a>
+                        <a href="#" class="menu-link">Instagram</a>
+                    </div>
+                </details>
+
+                <a href="{{ url_for('suporte') }}" class="menu-link">FAQ</a>
+                <a href="#" class="menu-link">Sistemas</a>
+                <a href="#" class="menu-link">Ferramentas</a>
+            </div>
+        </details>
+
+        <details>
+            <summary>Marketing</summary>
+            <div class="submenu">
+                
+                <details>
+                    <summary>Filmagens</summary>
+                    <div class="submenu">
+                        <a href="#" class="menu-link">Horários</a>
+                        <a href="#" class="menu-link">Temas</a>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>Imagens</summary>
+                    <div class="submenu">
+                        <a href="#" class="menu-link">Capas</a>
+                    </div>
+                </details>
+
+            </div>
+        </details>
+
+        <details>
+            <summary>RH</summary>
+            <div class="submenu">
+                <a href="#" class="menu-link">Políticas Internas</a>
+                <a href="#" class="menu-link">Recrutamento</a>
+            </div>
+        </details>
+
+        <hr>
+        <a href="{{ url_for('logout') }}" class="menu-link" style="padding-left: 8px; color: #ff4444;">Sair do sistema</a>
+    </div>
+    
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
