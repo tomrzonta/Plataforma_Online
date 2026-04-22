@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, abort
+from flask import render_template, url_for, redirect, request, abort, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from .models import User, Noticia, Setor, Subcategoria, Pagina, Log, db 
 from sqlalchemy import or_
@@ -21,7 +21,35 @@ def register_routes(app):
             return dict(setores_menu=setores)
         return dict(setores_menu=[])
 
-    
+    # === MOTOR DE ARRASTAR E SOLTAR (DRAG AND DROP) ===
+    @app.route('/admin/reordenar/<tipo>', methods=['POST'])
+    @login_required
+    def admin_reordenar(tipo):
+        if current_user.role != 'admin': abort(403)
+        
+        # Recebe a nova ordem do JavaScript
+        dados = request.get_json()
+        nova_ordem = dados.get('ordem', [])
+        
+        # Identifica o que estamos reordenando
+        modelo = None
+        if tipo == 'setor': modelo = Setor
+        elif tipo == 'subcategoria': modelo = Subcategoria
+        elif tipo == 'pagina': modelo = Pagina
+        
+        if modelo:
+            # Atualiza o banco de dados um por um na nova posição
+            for index, item_id in enumerate(nova_ordem):
+                item = modelo.query.get(item_id)
+                if item:
+                    try:
+                        item.ordem = index # Salva a nova posição (0, 1, 2, 3...)
+                    except Exception as e:
+                        print(f"Aviso: O modelo {tipo} não tem a coluna 'ordem' configurada. Erro: {e}")
+            db.session.commit()
+            return jsonify({'status': 'sucesso'})
+            
+        return jsonify({'status': 'erro'}), 400
 
     # --- LOGIN E LOGOUT ---
     @app.route('/login', methods=['GET', 'POST'])

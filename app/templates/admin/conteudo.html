@@ -1,33 +1,69 @@
 {% extends "admin/admin_base.html" %}
 {% block content %}
-    <h1>2. Gestão de Sub-Gavetas</h1>
+    <style>
+        /* Estilos modernos para esta tela */
+        .card-subgaveta {
+            display: flex; align-items: center; background: white; 
+            border: 1px solid #e9ecef; padding: 15px 20px; text-decoration: none; 
+            color: #333; border-radius: 8px; transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .card-subgaveta:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+            border-color: #ccc;
+        }
+        .btn-criar {
+            padding: 10px 20px; background: #4CAF50; color: white; 
+            border: none; border-radius: 4px; cursor: pointer; 
+            font-weight: bold; transition: background 0.2s; white-space: nowrap;
+        }
+        .btn-criar:hover { background: #45a049; }
+        .input-form {
+            padding: 10px; border: 1px solid #ccc; border-radius: 4px; flex: 1; min-width: 200px;
+        }
+    </style>
+
+    <h1 style="color: #1a1d20; margin-bottom: 25px;">2. Gestão de Sub-Gavetas</h1>
     
-    <div style="background: #eee; padding: 15px; margin-bottom: 20px;">
-        <h3>Criar Nova Sub-gaveta</h3>
-        <form method="POST">
-            <input type="text" name="nome_subcategoria" placeholder="Ex: FAQ, Intercom, Capas..." required>
-            <select name="setor_id" required>
+    <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 35px; border-left: 5px solid #4CAF50;">
+        <h3 style="margin-top: 0; color: #333; margin-bottom: 15px;">✨ Criar Nova Sub-gaveta</h3>
+        <form method="POST" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+            <input type="text" name="nome_subcategoria" placeholder="Ex: FAQ, Intercom, Capas..." required class="input-form">
+            <select name="setor_id" required class="input-form" style="flex: unset; width: 250px;">
                 <option value="">Pertence a qual Setor?</option>
                 {% for setor in setores %}
                     <option value="{{ setor.id }}">{{ setor.nome }}</option>
                 {% endfor %}
             </select>
-            <button type="submit">Criar e Adicionar Material ➔</button>
+            <button type="submit" class="btn-criar">Criar e Adicionar Material ➔</button>
         </form>
     </div>
 
-    <h3>Pastas Existentes (Clique para abrir)</h3>
+    <h2 style="color: #333; margin-bottom: 20px;">Pastas Existentes</h2>
+    
     {% for setor in setores %}
-        <div style="margin-bottom: 15px;">
-            <strong style="color: #3F0E40; font-size: 1.2em;">{{ setor.nome }}</strong>
-            <div style="display: flex; gap: 10px; margin-top: 5px; flex-wrap: wrap;">
+        <div style="margin-bottom: 30px; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <h3 style="color: #3F0E40; border-bottom: 2px solid #f4f6f9; padding-bottom: 10px; margin-top: 0; font-size: 1.2em;">
+                {{ setor.nome }}
+            </h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; margin-top: 15px;">
                 {% for sub in setor.subcategorias %}
-                    <a href="{{ url_for('admin_gerenciar_sub', id=sub.id) }}" style="background: white; border: 1px solid #ccc; padding: 10px; text-decoration: none; color: #333; border-radius: 4px;">
-                        📁 {{ sub.nome }} <br>
-                        <small style="color: #888;">({{ sub.paginas|length }} materiais)</small>
+                    <a href="{{ url_for('admin_gerenciar_sub', id=sub.id) }}" class="card-subgaveta">
+                        <div style="font-size: 2.2em; margin-right: 15px;">📁</div>
+                        <div>
+                            <strong style="display: block; font-size: 1.1em; color: #1a1d20; margin-bottom: 3px;">{{ sub.nome }}</strong>
+                            <span style="background: #e9ecef; color: #495057; font-size: 0.8em; padding: 3px 8px; border-radius: 12px; font-weight: bold;">
+                                {{ sub.paginas|length }} materiais
+                            </span>
+                        </div>
                     </a>
+                {% else %}
+                    <p style="color: #999; font-style: italic; margin: 0; padding: 10px 0;">Nenhuma sub-gaveta criada neste setor ainda.</p>
                 {% endfor %}
             </div>
         </div>
     {% endfor %}
+
 {% endblock %}

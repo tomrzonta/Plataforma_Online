@@ -1,15 +1,79 @@
 {% extends "admin/admin_base.html" %}
 {% block content %}
-    <h1>1. Gestão de Setores (Gavetas Principais)</h1>
-    <div style="background: #eee; padding: 15px; margin-bottom: 20px;">
-        <form method="POST">
-            <input type="text" name="nome_setor" placeholder="Ex: Suporte, Financeiro, MKT..." required>
-            <button type="submit">Criar Setor</button>
+    <style>
+        .card-setor {
+            display: flex; align-items: center; justify-content: space-between;
+            background: white; border: 1px solid #e9ecef; padding: 20px; 
+            color: #333; border-radius: 8px; transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .card-setor:hover { box-shadow: 0 6px 12px rgba(0,0,0,0.08); border-color: #ccc; }
+        .drag-handle { cursor: grab; font-size: 1.5em; margin-right: 15px; color: #adb5bd; transition: color 0.2s;}
+        .drag-handle:hover { color: #3F0E40; }
+        .drag-handle:active { cursor: grabbing; }
+        .btn-criar {
+            padding: 10px 20px; background: #4CAF50; color: white; 
+            border: none; border-radius: 4px; cursor: pointer; font-weight: bold;
+        }
+        .btn-criar:hover { background: #45a049; }
+        .input-form { padding: 10px; border: 1px solid #ccc; border-radius: 4px; flex: 1; min-width: 200px; }
+    </style>
+
+    <h1 style="color: #1a1d20; margin-bottom: 25px;">1. Gestão de Setores (Gavetas Principais)</h1>
+
+    <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 35px; border-left: 5px solid #4CAF50;">
+        <h3 style="margin-top: 0; color: #333; margin-bottom: 15px;">✨ Criar Nova Gaveta Principal</h3>
+        <form method="POST" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+            <input type="text" name="nome_setor" placeholder="Ex: Suporte, Financeiro, MKT..." required class="input-form">
+            <button type="submit" class="btn-criar">Criar Gaveta ➔</button>
         </form>
     </div>
-    <ul>
+
+    <h2 style="color: #333; margin-bottom: 20px;">Gavetas Existentes (Arraste para reordenar)</h2>
+    
+    <div id="lista-setores" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
         {% for setor in setores %}
-            <li><strong>{{ setor.nome }}</strong></li>
+            <div class="card-setor" data-id="{{ setor.id }}">
+                <div style="display: flex; align-items: center;">
+                    <span class="drag-handle">☰</span>
+                    <div style="font-size: 2em; margin-right: 15px;">🗄️</div>
+                    <div>
+                        <strong style="display: block; font-size: 1.2em; color: #1a1d20;">{{ setor.nome }}</strong>
+                        <span style="color: #888; font-size: 0.9em; margin-top: 4px; display: inline-block;">
+                            Contém {{ setor.subcategorias|length }} sub-gaveta(s)
+                        </span>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p style="color: #999; font-style: italic;">Nenhuma gaveta principal criada ainda.</p>
         {% endfor %}
-    </ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var el = document.getElementById('lista-setores');
+            if (el) {
+                new Sortable(el, {
+                    handle: '.drag-handle', // Faz com que só arraste ao clicar no ícone ☰
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    onEnd: function (evt) {
+                        // Quando soltar o mouse, pega a nova ordem e manda pro Flask
+                        var novaOrdem = [];
+                        el.querySelectorAll('.card-setor').forEach(function(card) {
+                            novaOrdem.push(card.getAttribute('data-id'));
+                        });
+                        
+                        fetch("{{ url_for('admin_reordenar', tipo='setor') }}", {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ ordem: novaOrdem })
+                        });
+                    }
+                });
+            }
+        });
+    </script>
 {% endblock %}

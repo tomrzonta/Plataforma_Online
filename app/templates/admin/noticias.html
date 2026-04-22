@@ -1,31 +1,57 @@
 {% extends "admin/admin_base.html" %}
 {% block content %}
-    <h1>Gestão de Notícias</h1>
-    
-    <div style="background: #eee; padding: 15px; margin-bottom: 20px;">
-        <h3>Nova Notícia</h3>
+    <style>
+        .card-noticia {
+            background: white; border: 1px solid #e9ecef; padding: 25px; 
+            border-radius: 8px; transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 20px;
+        }
+        .card-noticia:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+            border-color: #ccc;
+        }
+        .btn-criar {
+            padding: 10px 20px; background: #4CAF50; color: white; 
+            border: none; border-radius: 4px; cursor: pointer; 
+            font-weight: bold; transition: background 0.2s; white-space: nowrap;
+        }
+        .btn-criar:hover { background: #45a049; }
+        .input-form {
+            padding: 12px; border: 1px solid #ccc; border-radius: 4px; width: 100%; 
+            box-sizing: border-box; margin-bottom: 15px; font-family: inherit;
+        }
+    </style>
+
+    <h1 style="color: #1a1d20; margin-bottom: 25px;">📢 3. Gestão de Notícias</h1>
+
+    <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 35px; border-left: 5px solid #4CAF50;">
+        <h3 style="margin-top: 0; color: #333; margin-bottom: 15px;">✨ Publicar Novo Aviso no Feed</h3>
         <form method="POST">
-            <input type="text" name="titulo" placeholder="Título" required><br><br>
-            <textarea name="conteudo" placeholder="Conteúdo" required></textarea><br>
-            <button type="submit">Publicar Agora</button>
+            <input type="text" name="titulo" placeholder="Título do aviso (Ex: Atualização no sistema PIX)" required class="input-form">
+            <textarea name="conteudo" placeholder="Escreva o conteúdo do aviso aqui..." required class="input-form" style="height: 120px; resize: vertical;"></textarea>
+            <button type="submit" class="btn-criar">Publicar no Workspace ➔</button>
         </form>
     </div>
 
-    <h3>Notícias Publicadas</h3>
-    <table border="1" width="100%" style="border-collapse: collapse;">
-        <tr>
-            <th>Título</th>
-            <th>Data</th>
-            <th>Ações</th>
-        </tr>
-        {% for n in noticias %}
-        <tr>
-            <td>{{ n.titulo }}</td>
-            <td>{{ n.data_criacao.strftime('%d/%m/%Y') }}</td>
-            <td>
-                <a href="{{ url_for('deletar_noticia', id=n.id) }}" style="color: red;">Excluir</a>
-            </td>
-        </tr>
+    <h2 style="color: #333; margin-bottom: 20px;">Histórico de Avisos Publicados</h2>
+    
+    <div>
+        {% for noticia in noticias %}
+            <div class="card-noticia">
+                <h3 style="margin-top: 0; color: #3F0E40; margin-bottom: 10px; font-size: 1.4em;">{{ noticia.titulo }}</h3>
+                
+                <p style="color: #444; font-size: 1.05em; line-height: 1.6; white-space: pre-wrap; margin-bottom: 20px;">{{ noticia.conteudo }}</p>
+                
+                <div style="font-size: 0.85em; color: #888; border-top: 1px solid #eee; padding-top: 15px; display: flex; justify-content: space-between;">
+                    <span>Postado por <strong>{{ noticia.autor.username if noticia.autor else 'Sistema' }}</strong></span>
+                    <span>🗓️ {{ noticia.data_criacao.strftime('%d/%m/%Y às %H:%M') }}</span>
+                </div>
+            </div>
+        {% else %}
+            <p style="color: #999; font-style: italic; background: white; padding: 20px; border-radius: 8px; border: 1px dashed #ccc; text-align: center;">Nenhuma notícia foi publicada no mural ainda.</p>
         {% endfor %}
-    </table>
+    </div>
+
 {% endblock %}
