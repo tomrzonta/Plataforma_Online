@@ -1,0 +1,15 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+    <h1>1. Gestão de Setores (Gavetas Principais)</h1>
+    <div style="background: #eee; padding: 15px; margin-bottom: 20px;">
+        <form method="POST">
+            <input type="text" name="nome_setor" placeholder="Ex: Suporte, Financeiro, MKT..." required>
+            <button type="submit">Criar Setor</button>
+        </form>
+    </div>
+    <ul>
+        {% for setor in setores %}
+            <li><strong>{{ setor.nome }}</strong></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

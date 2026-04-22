@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Administração</title>
+    <style>
+        body { display: flex; margin: 0; font-family: sans-serif; }
+        
+        /* O estilo que desenha a barra lateral escura */
+        .admin-sidebar { 
+            width: 260px; 
+            background: #1a1d20; 
+            color: #d1d2d3; 
+            height: 100vh; 
+            padding: 20px 10px; 
+            box-sizing: border-box;
+        }
+        /* O estilo que joga o conteúdo para a direita */
+        .content { flex: 1; padding: 20px; background: #f4f6f9; height: 100vh; overflow-y: auto; }
+        
+        a.menu-link { 
+            color: #d1d2d3; text-decoration: none; padding: 10px 8px 10px 20px; 
+            display: block; border-radius: 4px; margin-bottom: 5px;
+        }
+        a.menu-link:hover { background: #2c3136; color: white; }
+        hr { border-color: #343a40; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="admin-sidebar">
+        <h3 style="color: white; padding-left: 8px; margin-top: 0;">⚙️ Painel Admin</h3>
+        <hr>
+
+        <a href="{{ url_for('admin_setores') }}" class="menu-link">📂 1. Gestão de Setores</a>
+        <a href="{{ url_for('admin_conteudo') }}" class="menu-link">📄 2. Sub-gavetas & Conteúdo</a>
+        <a href="{{ url_for('admin_noticias') }}" class="menu-link">📢 3. Gestão de Notícias</a>
+        <a href="{{ url_for('ver_logs') }}" class="menu-link">🛡️ Registro de Logs</a>
+
+        <hr>
+        <a href="{{ url_for('home') }}" class="menu-link" style="color: #4CAF50; font-weight: bold;">⬅ Voltar ao Workspace</a>
+        <a href="{{ url_for('logout') }}" class="menu-link" style="color: #ff4444;">Sair do sistema</a>
+    </div>
+    
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

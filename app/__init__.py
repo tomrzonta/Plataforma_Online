@@ -35,7 +35,8 @@ def create_app():
         
         # Cria um usuário de teste se o banco estiver vazio
         if not User.query.filter_by(username='admin').first():
-            admin = User(username='admin', password='123', setor='ti')
+            # A palavra role='admin' aqui é o que dá a chave do painel!
+            admin = User(username='admin', password='123', setor='ti', role='admin')
             db.session.add(admin)
             db.session.commit()
             

@@ -1,0 +1,38 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+    <h1>Gestão de Páginas (Conteúdo)</h1>
+    
+    <div style="background: #eee; padding: 15px; margin-bottom: 20px;">
+        <h3>Nova Página / FAQ</h3>
+        <form method="POST">
+            <input type="text" name="titulo" placeholder="Título da Página (Ex: Como estornar um PIX)" required style="width: 100%; margin-bottom: 10px; padding: 5px;"><br>
+            
+            <select name="subcategoria_id" required style="width: 100%; margin-bottom: 10px; padding: 5px;">
+                <option value="">Selecione a Gaveta de destino...</option>
+                {% for sub in subcategorias %}
+                    <option value="{{ sub.id }}">{{ sub.setor.nome }} > {{ sub.nome }}</option>
+                {% endfor %}
+            </select><br>
+
+            <textarea name="conteudo" placeholder="Escreva o conteúdo da documentação aqui..." required style="width: 100%; height: 150px; margin-bottom: 10px; padding: 5px;"></textarea><br>
+            
+            <button type="submit" style="padding: 5px 15px; cursor: pointer;">Salvar Página</button>
+        </form>
+    </div>
+
+    <h3>Páginas Cadastradas</h3>
+    <table border="1" width="100%" style="border-collapse: collapse; text-align: left;">
+        <tr style="background: #ddd;">
+            <th style="padding: 8px;">Título</th>
+            <th style="padding: 8px;">Localização (Gaveta)</th>
+            <th style="padding: 8px;">Última Atualização</th>
+        </tr>
+        {% for p in paginas %}
+        <tr>
+            <td style="padding: 8px;">{{ p.titulo }}</td>
+            <td style="padding: 8px;">{{ p.subcategoria.setor.nome }} > {{ p.subcategoria.nome }}</td>
+            <td style="padding: 8px;">{{ p.data_atualizacao.strftime('%d/%m/%Y %H:%M') }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

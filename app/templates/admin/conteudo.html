@@ -1,0 +1,33 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+    <h1>2. Gestão de Sub-Gavetas</h1>
+    
+    <div style="background: #eee; padding: 15px; margin-bottom: 20px;">
+        <h3>Criar Nova Sub-gaveta</h3>
+        <form method="POST">
+            <input type="text" name="nome_subcategoria" placeholder="Ex: FAQ, Intercom, Capas..." required>
+            <select name="setor_id" required>
+                <option value="">Pertence a qual Setor?</option>
+                {% for setor in setores %}
+                    <option value="{{ setor.id }}">{{ setor.nome }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Criar e Adicionar Material ➔</button>
+        </form>
+    </div>
+
+    <h3>Pastas Existentes (Clique para abrir)</h3>
+    {% for setor in setores %}
+        <div style="margin-bottom: 15px;">
+            <strong style="color: #3F0E40; font-size: 1.2em;">{{ setor.nome }}</strong>
+            <div style="display: flex; gap: 10px; margin-top: 5px; flex-wrap: wrap;">
+                {% for sub in setor.subcategorias %}
+                    <a href="{{ url_for('admin_gerenciar_sub', id=sub.id) }}" style="background: white; border: 1px solid #ccc; padding: 10px; text-decoration: none; color: #333; border-radius: 4px;">
+                        📁 {{ sub.nome }} <br>
+                        <small style="color: #888;">({{ sub.paginas|length }} materiais)</small>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

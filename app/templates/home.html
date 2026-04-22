@@ -1,5 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Feed Geral</h1>
-    <p>Olá, {{ user.id }}! Bem-vindo à base de conhecimento interna.</p>
+    <h1># notícias-e-avisos</h1>
+    <p>Bem-vindo, <strong>{{ user.username }}</strong>!</p>
+    <hr>
+
+    <h3>Últimas Atualizações</h3>
+    
+    {% for noticia in noticias %}
+        <div style="background: white; padding: 15px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc;">
+            <h4 style="margin-top: 0; color: #3F0E40;">{{ noticia.titulo }}</h4>
+            <p style="white-space: pre-wrap;">{{ noticia.conteudo }}</p>
+            <small style="color: #666;">
+                Postado por <strong>{{ noticia.autor.username }}</strong> em {{ noticia.data_criacao.strftime('%d/%m/%Y %H:%M') }}
+            </small>
+        </div>
+    {% else %}
+        <p>Nenhuma notícia foi postada ainda. Fique de olho nas novidades!</p>
+    {% endfor %}
+
 {% endblock %}

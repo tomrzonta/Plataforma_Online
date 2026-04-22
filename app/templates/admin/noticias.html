@@ -1,0 +1,31 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+    <h1>Gestão de Notícias</h1>
+    
+    <div style="background: #eee; padding: 15px; margin-bottom: 20px;">
+        <h3>Nova Notícia</h3>
+        <form method="POST">
+            <input type="text" name="titulo" placeholder="Título" required><br><br>
+            <textarea name="conteudo" placeholder="Conteúdo" required></textarea><br>
+            <button type="submit">Publicar Agora</button>
+        </form>
+    </div>
+
+    <h3>Notícias Publicadas</h3>
+    <table border="1" width="100%" style="border-collapse: collapse;">
+        <tr>
+            <th>Título</th>
+            <th>Data</th>
+            <th>Ações</th>
+        </tr>
+        {% for n in noticias %}
+        <tr>
+            <td>{{ n.titulo }}</td>
+            <td>{{ n.data_criacao.strftime('%d/%m/%Y') }}</td>
+            <td>
+                <a href="{{ url_for('deletar_noticia', id=n.id) }}" style="color: red;">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

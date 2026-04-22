@@ -6,81 +6,38 @@
     <style>
         body { display: flex; margin: 0; font-family: sans-serif; }
         
-        /* Estilo da barra lateral */
         .sidebar { 
-            width: 260px; /* Aumentado um pouco para acomodar as sub-gavetas */
+            width: 260px; 
             background: #3F0E40; 
             color: #d1d2d3; 
             height: 100vh; 
             padding: 20px 10px; 
             box-sizing: border-box;
-            overflow-y: auto; /* Permite rolar o menu se ele ficar muito longo */
+            overflow-y: auto; 
         }
-        .content { flex: 1; padding: 20px; background: #f8f9fa; }
+        .content { flex: 1; padding: 20px; background: #f8f9fa; height: 100vh; overflow-y: auto; }
         
-        /* ========================================= */
-        /* ESTILOS DAS GAVETAS (DETAILS / SUMMARY)   */
-        /* ========================================= */
-        details {
-            margin-bottom: 5px;
-        }
+        details { margin-bottom: 5px; }
         
-        /* O título da gaveta */
         summary {
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            color: white;
-            list-style: none; /* Remove a seta padrão do navegador */
-            display: flex;
-            align-items: center;
+            cursor: pointer; padding: 8px; border-radius: 4px;
+            font-weight: bold; color: white; list-style: none;
+            display: flex; align-items: center;
         }
-        
-        /* Setinha customizada animada */
         summary::before {
-            content: '▶';
-            font-size: 0.7em;
-            margin-right: 8px;
-            transition: transform 0.2s; /* Animação suave */
+            content: '▶'; font-size: 0.7em; margin-right: 8px; transition: transform 0.2s;
         }
+        details[open] > summary::before { transform: rotate(90deg); }
+        summary:hover { background: #350d36; }
         
-        /* Gira a setinha para baixo quando a gaveta está aberta */
-        details[open] > summary::before {
-            transform: rotate(90deg);
-        }
+        .submenu { padding-left: 20px; display: flex; flex-direction: column; }
+        .submenu details summary { font-weight: normal; color: #d1d2d3; }
         
-        /* Efeito ao passar o mouse */
-        summary:hover {
-            background: #350d36; 
-        }
-        
-        /* O conteúdo dentro da gaveta */
-        .submenu {
-            padding-left: 20px; /* Cria o recuo visual da hierarquia */
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* Ajuste visual para sub-gavetas não ficarem em negrito */
-        .submenu details summary {
-            font-weight: normal;
-            color: #d1d2d3;
-        }
-        
-        /* Estilo dos links normais no menu */
         a.menu-link { 
-            color: #d1d2d3; 
-            text-decoration: none; 
-            padding: 8px 8px 8px 20px; 
-            display: block;
-            border-radius: 4px;
+            color: #d1d2d3; text-decoration: none; padding: 8px 8px 8px 20px; 
+            display: block; border-radius: 4px;
         }
-        a.menu-link:hover {
-            background: #350d36;
-            color: white;
-        }
-        
+        a.menu-link:hover { background: #350d36; color: white; }
         hr { border-color: #522653; }
     </style>
 </head>
@@ -88,59 +45,50 @@
     <div class="sidebar">
         <h3 style="color: white; padding-left: 8px; margin-top: 0;">Workspace</h3>
         
+        <div style="padding: 0 8px 15px 8px;">
+            <form action="{{ url_for('busca') }}" method="GET" style="display: flex;">
+                <input type="text" name="q" placeholder="Buscar documento..." required style="flex: 1; padding: 6px; border-radius: 4px; border: none; outline: none; font-family: sans-serif;">
+                <button type="submit" style="background: #f2c744; border: none; padding: 6px 10px; margin-left: 5px; border-radius: 4px; cursor: pointer;">🔍</button>
+            </form>
+        </div>
+        
         <a href="{{ url_for('home') }}" class="menu-link" style="padding-left: 8px; font-weight: bold; color: white;"># feed-geral</a>
         <hr>
 
-        <details>
-            <summary>Suporte</summary>
-            <div class="submenu">
-                
-                <details>
-                    <summary>Canais de atendimento</summary>
-                    <div class="submenu">
-                        <a href="#" class="menu-link">Intercom</a>
-                        <a href="#" class="menu-link">Reclame Aqui</a>
-                        <a href="#" class="menu-link">Instagram</a>
-                    </div>
-                </details>
-
-                <a href="{{ url_for('suporte') }}" class="menu-link">FAQ</a>
-                <a href="#" class="menu-link">Sistemas</a>
-                <a href="#" class="menu-link">Ferramentas</a>
-            </div>
-        </details>
-
-        <details>
-            <summary>Marketing</summary>
-            <div class="submenu">
-                
-                <details>
-                    <summary>Filmagens</summary>
-                    <div class="submenu">
-                        <a href="#" class="menu-link">Horários</a>
-                        <a href="#" class="menu-link">Temas</a>
-                    </div>
-                </details>
-
-                <details>
-                    <summary>Imagens</summary>
-                    <div class="submenu">
-                        <a href="#" class="menu-link">Capas</a>
-                    </div>
-                </details>
-
-            </div>
-        </details>
-
-        <details>
-            <summary>RH</summary>
-            <div class="submenu">
-                <a href="#" class="menu-link">Políticas Internas</a>
-                <a href="#" class="menu-link">Recrutamento</a>
-            </div>
-        </details>
+        {% for setor in setores_menu %}
+            <details {% if pagina is defined and pagina.subcategoria.setor_id == setor.id %}open{% endif %}>
+                <summary>{{ setor.nome }}</summary>
+                <div class="submenu">
+                    
+                    {% for sub in setor.subcategorias %}
+                        <details {% if pagina is defined and pagina.subcategoria_id == sub.id %}open{% endif %}>
+                            <summary>{{ sub.nome }}</summary>
+                            <div class="submenu">
+                                
+                                {% if sub.paginas %}
+                                    {% for p in sub.paginas %}
+                                        <a href="{{ url_for('ver_pagina', id=p.id) }}" class="menu-link" 
+                                           style="font-size: 0.9em; padding: 5px 8px 5px 20px; 
+                                           {% if pagina is defined and pagina.id == p.id %}
+                                               background: #350d36; color: white; font-weight: bold; border-left: 3px solid #f2c744;
+                                           {% endif %}">
+                                           📄 {{ p.titulo }}
+                                        </a>
+                                    {% endfor %}
+                                {% else %}
+                                    <span style="color: #666; padding-left: 20px; font-size: 0.8em;">(Vazio)</span>
+                                {% endif %}
+                                
+                            </div>
+                        </details>
+                    {% endfor %}
+                    
+                </div>
+            </details>
+        {% endfor %}
 
         <hr>
+        <a href="{{ url_for('admin_setores') }}" class="menu-link" style="padding-left: 8px; color: #f2c744;">Painel Admin</a>
         <a href="{{ url_for('logout') }}" class="menu-link" style="padding-left: 8px; color: #ff4444;">Sair do sistema</a>
     </div>
     

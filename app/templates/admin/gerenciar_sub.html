@@ -1,0 +1,31 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+    <a href="{{ url_for('admin_conteudo') }}" style="color: #666; text-decoration: none;">⬅ Voltar para Sub-gavetas</a>
+    
+    <h1 style="color: #3F0E40;">📁 {{ sub.setor.nome }} > {{ sub.nome }}</h1>
+    
+    <div style="background: #e9ecef; padding: 15px; margin-bottom: 20px; border-left: 4px solid #3F0E40;">
+        <h3>Adicionar Novo Material nesta pasta</h3>
+        <form method="POST">
+            <input type="text" name="titulo" placeholder="Título do material (Ex: Regra do PIX)" required style="width: 100%; margin-bottom: 10px; padding: 5px;"><br>
+            <textarea name="conteudo" placeholder="Cole o texto ou documentação aqui..." required style="width: 100%; height: 120px; margin-bottom: 10px; padding: 5px;"></textarea><br>
+            <button type="submit" style="padding: 5px 15px;">Salvar Material</button>
+        </form>
+    </div>
+
+    <h3>Materiais já cadastrados aqui:</h3>
+    <table border="1" width="100%" style="border-collapse: collapse; background: white;">
+        <tr>
+            <th style="padding: 8px;">Título</th>
+            <th style="padding: 8px;">Última Atualização</th>
+        </tr>
+        {% for p in sub.paginas %}
+        <tr>
+            <td style="padding: 8px;">{{ p.titulo }}</td>
+            <td style="padding: 8px;">{{ p.data_atualizacao.strftime('%d/%m/%Y %H:%M') }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="2" style="padding: 8px; text-align: center;">Esta pasta está vazia.</td></tr>
+        {% endfor %}
+    </table>
+{% endblock %}
